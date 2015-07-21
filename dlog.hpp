@@ -5,10 +5,13 @@
 
 
 
-#define DLOG_VERSION  ("0")
+#define DLOG_VERSION  ("0.1")
 
 #define DLOG_TYPE_BASIC 0
+#define DLOG_TYPE_BASICSTR "basic"
+
 #define DLOG_TYPE_TODO  1
+#define DLOG_TYPE_TODOSTR "todo"
 
 //#define MX_APP_DEFAULT_configPathGlobal
 //#define MX_APP_DEFAULT_configPathGlobal_env

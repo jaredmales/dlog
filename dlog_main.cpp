@@ -15,6 +15,7 @@
 #include "dlog.hpp"
 #include "basicLogger.hpp"
 
+#include "randomNumberLinux.hpp"
 
 
 
@@ -28,10 +29,8 @@ int main(int argc, char *argv[])
    
    dlog::getTimestamp(tsp);
       
-   dlog::basicLogger log(tsp);
-   
-   //log.log(argc, argv, tsp);
-   
+   dlog::basicLogger<dlog::randomNumberLinux> log(tsp);
+      
    log.main(argc, argv);
 }
    

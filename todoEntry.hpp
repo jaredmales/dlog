@@ -5,9 +5,7 @@
 
 namespace dlog 
 {
-
-template<typename randomNumberT>
-class todoEntry : public basicEntry<randomNumberT>
+class todoEntry : public basicEntry
 {
 
 public:
@@ -16,10 +14,8 @@ public:
 
 };
 
-template<typename randomNumberT>
-todoEntry<randomNumberT>::todoEntry()
+todoEntry::todoEntry()
 {
-   this->type = "todo";
    return;
 }
 

@@ -6,31 +6,46 @@
 #include "dlog.hpp"
 #include "mx/application.hpp"
 
+#include "timeStamp.hpp"
+
 #include "basicEntry.hpp"
 #include "todoEntry.hpp"
 
 
-#include "randomNumberLinux.hpp"
    
 namespace dlog
 {
    
+template<typename randomNumberT>   
 class basicLogger : public mx::application
 {
 protected:
    
+   randomNumberT randomNumber;
    std::string _userName;
    std::string _path;
    
    int _type;
+   std::string _typeStr;
    
    timeStamp _timeStamp;
+   std::string _fileName;
    
    std::string _text;
    
 public:
    
    basicLogger(const timespec & tsp);
+
+   void setUserName(const std::string & userName);
+   std::string getUserName();
+   
+   void setTimeStamp(const timespec & tsp);
+   void setTimeStamp(const timeStamp & tsp);
+
+   std::string getFileName();
+   std::string getPathName();
+   std::string getFullName();
    
    //basicEntry<randomNumberLinux> be;
    
@@ -40,21 +55,69 @@ public:
 
    virtual int execute();
    
-   template<class logT>
-   int log(logT & entry);
+  // template<class logT>
+  // int log(logT & entry);
 
+   template<class logT>
+   int writeLog(logT & entry);
+   
+   int commitLog();
    
 };
 
-inline
-basicLogger::basicLogger(const timespec & tsp)
+template<typename randomNumberT>
+basicLogger<randomNumberT>::basicLogger(const timespec & tsp)
 {
    _timeStamp.setTime(tsp);
    _type = DLOG_TYPE_BASIC;
+   _typeStr = DLOG_TYPE_BASICSTR;
 }
 
-inline
-void basicLogger::setupConfig()
+
+template<typename randomNumberT>
+std::string basicLogger<randomNumberT>::getUserName()
+{
+   return _userName;
+}
+   
+template<typename randomNumberT>
+void basicLogger<randomNumberT>::setUserName(const std::string & userName)
+{
+   _userName = userName;
+}
+
+template<typename randomNumberT>
+void basicLogger<randomNumberT>::setTimeStamp(const timespec & tsp)
+{
+   _timeStamp.setTime(tsp);
+}
+
+template<typename randomNumberT>
+void basicLogger<randomNumberT>::setTimeStamp(const timeStamp & tsp)
+{
+   _timeStamp = tsp;
+}
+
+template<typename randomNumberT>
+std::string basicLogger<randomNumberT>::getFileName()
+{
+   return _fileName;
+}
+
+template<typename randomNumberT>
+std::string basicLogger<randomNumberT>::getPathName()
+{
+   return (_path + "/" + _userName + "/");
+}
+
+template<typename randomNumberT>
+std::string basicLogger<randomNumberT>::getFullName()
+{
+   return getPathName() + getFileName();
+}
+
+template<typename randomNumberT>
+void basicLogger<randomNumberT>::setupConfig()
 {
    config.add(mx::configTarget("editor","e", "editor",mx::argType::Required, "", "editor"));
    config.add(mx::configTarget("path","p", "path",mx::argType::Required, "", "path"));
@@ -66,8 +129,8 @@ void basicLogger::setupConfig()
   
 }
    
-inline   
-void basicLogger::loadConfig()
+template<typename randomNumberT>
+void basicLogger<randomNumberT>::loadConfig()
 {
    std::string tmpstr;
    
@@ -78,15 +141,14 @@ void basicLogger::loadConfig()
       exit(0);
    }
    _userName = tmpstr;//"jaredmales@gmail.com"
-   
+   _fileName =  _timeStamp.getFileName(_userName, randomNumber.nextRandom());
  
    _path = config.get<std::string>("path");
    
     
    if(config.nonOptions.size() == 0)
    {
-      std::cerr << "no log entry given" << "\n";
-      exit(0);
+      tmpstr = "";
    }
    else
    {
@@ -101,55 +163,117 @@ void basicLogger::loadConfig()
   
    
    if(config.get<std::string>("type") == "basic" || config.isSet("type-basic") )
+   {
       _type = DLOG_TYPE_BASIC;
-   
+      _typeStr = DLOG_TYPE_BASICSTR;
+   }
    if(config.get<std::string>("type") == "todo" || config.isSet("type-todo") )
+   {
       _type = DLOG_TYPE_TODO;
-   
+      _typeStr = DLOG_TYPE_TODOSTR;
+   }
 }
 
-inline
-int basicLogger::execute()
+template<typename randomNumberT>
+int basicLogger<randomNumberT>::execute()
 {   
+   std::string fullName;
+   
    switch(_type)
    {
       case DLOG_TYPE_BASIC:
       {  
-         basicEntry<randomNumberLinux> entry;
-         return log(entry);
+         basicEntry entry;
+         writeLog(entry);
       }
       
       case DLOG_TYPE_TODO:
       {
-         todoEntry<randomNumberLinux> entry;
-         return log(entry);
+         todoEntry entry;
+         writeLog(entry);
       }
    }
+   
+   if(_text == "")
+   {
+      std::string command = "vim -c 'startinsert' +2 " + getFullName();
+      int r = system(command.c_str());
+   }
+   
+   commitLog();
+   
 }
 
 
+
+// template<class logT>
+// template<typename randomNumberT>
+// int basicLogger<randomNumberT>::log(logT & entry)
+// {
+//       
+//    entry.setUserName(_userName);
+//    entry.setText(_text);
+//    entry.setTimeStamp(_timeStamp);
+//    
+//    std::ofstream fout;
+//    
+//    std::string baseName = entry.getFileName();
+//    std::string pathName = _path + "/" + _userName + "/";
+//    std::string fullName = pathName + baseName;
+//    
+//    fout.open(fullName);
+//    
+//    fout << entry << "\n";
+//    
+//    fout.close();
+//    
+//    std::string baseCommand, command;
+//    
+//    baseCommand = "git --git-dir=";
+//    baseCommand += pathName + ".git  --work-tree=" + pathName + " ";
+//    command =  baseCommand + "add ";
+//    command += fullName;
+//    command += " >> /dev/null";
+//    //std::cout << command << "\n";
+//    int rv = system(command.c_str());
+//    
+//    command = baseCommand + "commit --allow-empty-message -m '' ";
+//    command += fullName;
+//    command += " >> /dev/null";
+//    //std::cout << command << "\n";
+//   
+//    rv = system(command.c_str());
+//    
+// }
+
+template<typename randomNumberT>
 template<class logT>
-inline
-int basicLogger::log(logT & entry)
+int basicLogger<randomNumberT>::writeLog(logT & entry)
 {
-      
-   entry.setUserName(_userName);
+   
    entry.setText(_text);
-   entry.setTimeStamp(_timeStamp);
    
    std::ofstream fout;
+      
+   fout.open(getFullName());
    
-   std::string baseName = entry.getFileName();
-   std::string pathName = _path + "/" + _userName + "/";
-   std::string fullName = pathName + baseName;
-   
-   fout.open(fullName);
-   
-   fout << entry << "\n";
+   //fout << "<dlog v=\"" <<  DLOG_VERSION <<"\" tai=\"" << _timeStamp.getTimeStampString() << "\" t=\"";
+   fout << "<dlog v=\"" <<  DLOG_VERSION <<"\" t=\"";
+   fout << _typeStr << "\">\n";
+   entry.outputEntry(fout);
+   fout << "</dlog>";
    
    fout.close();
    
+}
+   
+template<typename randomNumberT>
+int basicLogger<randomNumberT>::commitLog()
+{
    std::string baseCommand, command;
+   
+   std::string pathName = getPathName();
+   std::string fullName = getFullName();
    
    baseCommand = "git --git-dir=";
    baseCommand += pathName + ".git  --work-tree=" + pathName + " ";
@@ -167,8 +291,6 @@ int basicLogger::log(logT & entry)
    rv = system(command.c_str());
    
 }
-
-
 
 } //namespace dlog
 
