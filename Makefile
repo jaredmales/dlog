@@ -18,18 +18,23 @@ INCLUDE = -I$(INCLUDE_PATH)
 	$(CPP) $(OPTIMIZE) $(CPPFLAGS) $(INCLUDE) -c $<
 
 # programs to be made
-TARGETS = dlog
+TARGETS = dlog dlogquery
 
 all : $(TARGETS)
 
 OBJS = dlog_main.o
+QUERY_OBJS = dlogquery.o
+
 HEADS =   dlog.hpp  timeStamp.hpp  basicEntry.hpp basicLogger.hpp
 
 dlog_main.o: $(HEADS)
 
 dlog: $(OBJS) $(HEADS)
 	$(CPP) -o dlog $(OBJS) $(OPTIMIZE) $(CPPFLAGS) -L$(LIB_PATH) -lmxlib  $(MXLIB_EXLIBS) 
-	
+
+dlogquery: $(QUERY_OBJS) $(HEADS)
+	$(CPP) -o dlogquery $(QUERY_OBJS) $(OPTIMIZE) $(CPPFLAGS) -L$(LIB_PATH) -lmxlib  $(MXLIB_EXLIBS) 
+
 install:
 	install dlog $(HOME)/bin
 	

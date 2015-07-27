@@ -17,7 +17,7 @@ namespace dlog
 
 class timeStamp 
 {
-protected:
+public:
    int year;
    int month;
    int day;
@@ -41,6 +41,8 @@ public:
    std::string getTimeStampString(const timespec & tsp);
 
    std::string getFileName(const std::string & usern, const int randN);
+   
+   int parseFileName(std::string & uname, long & randn, const std::string &fname);
 };
 
 inline
@@ -121,6 +123,49 @@ std::string timeStamp::getFileName(const std::string & usern, const int randN)
     
 }
 
+inline
+int timeStamp::parseFileName(std::string & uname, long & randn, const std::string & fname)
+{
+   int p;
+   int minlen = (4+1)+(2+1)+(2+1)+(2+1)+(2+1)+(2+1+9+1) + 1 +  (9+1) + 5+1;
+    
+   if(fname.size() < minlen)
+   {
+      uname = "";
+      randn = -1;
+      return -1;
+   }
+   
+   std::string tmp;
+   
+   tmp = fname.substr(0,4);
+   year = atoi(tmp.c_str());
+   
+   tmp = fname.substr(5,2);
+   month = atoi(tmp.c_str());
+   
+   tmp = fname.substr(8,2);
+   day = atoi(tmp.c_str());
+   
+   tmp = fname.substr(11,2);
+   hour = atoi(tmp.c_str());
+   
+   tmp = fname.substr(14,2);
+   minute = atoi(tmp.c_str());
+   
+   tmp = fname.substr(17,2);
+   second = atoi(tmp.c_str());
+   
+   tmp = fname.substr(20,9);
+   nanosecond = atoi(tmp.c_str());
+   
+   p = fname.find('_', 30);
+   uname = fname.substr(30, p-30);
+   
+   randn = -1;
+   
+   return 0;
+}
 
 } //namespace dlog 
 

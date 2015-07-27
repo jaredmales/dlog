@@ -11,6 +11,7 @@
 #include "basicEntry.hpp"
 #include "todoEntry.hpp"
 
+#include <set>
 
    
 namespace dlog
@@ -32,6 +33,14 @@ protected:
    std::string _fileName;
    
    std::string _text;
+   
+   ///Set to true if entry is a to-do list entry
+   bool _isToDo;
+
+   ///Collect the tags set by the configuration
+   /** Is a std::set to avoid duplication of tags.
+     */
+   std::set<std::string> _tags;
    
 public:
    
@@ -71,6 +80,8 @@ basicLogger<randomNumberT>::basicLogger(const timespec & tsp)
    _timeStamp.setTime(tsp);
    _type = DLOG_TYPE_BASIC;
    _typeStr = DLOG_TYPE_BASICSTR;
+   
+   _isToDo = false;
 }
 
 
@@ -125,7 +136,10 @@ void basicLogger<randomNumberT>::setupConfig()
    config.add(mx::configTarget("username","u", "user-name",mx::argType::Required, "", "user-name"));
    config.add(mx::configTarget("type","", "type",mx::argType::Required, "", "type"));
    config.add(mx::configTarget("type-basic","b", "basic",mx::argType::True, "", ""));
-   config.add(mx::configTarget("type-todo","t", "todo",mx::argType::True, "", ""));
+   
+   config.add(mx::configTarget("todo","t", "todo",mx::argType::True, "", ""));
+   
+   config.add(mx::configTarget("tags", "", "tag", mx::argType::Required, "", "tag"));
   
 }
    
@@ -167,11 +181,20 @@ void basicLogger<randomNumberT>::loadConfig()
       _type = DLOG_TYPE_BASIC;
       _typeStr = DLOG_TYPE_BASICSTR;
    }
-   if(config.get<std::string>("type") == "todo" || config.isSet("type-todo") )
+   
+  
+   //Set for todo
+   if(config.isSet("todo") )
    {
-      _type = DLOG_TYPE_TODO;
-      _typeStr = DLOG_TYPE_TODOSTR;
+      _isToDo = true;
    }
+   
+   //Load the tags
+   for(int i=0; i< config.count("tags"); ++i)
+   {
+      _tags.insert(config.get<std::string>("tags", i));
+   }
+      
 }
 
 template<typename randomNumberT>
@@ -187,11 +210,6 @@ int basicLogger<randomNumberT>::execute()
          writeLog(entry);
       }
       
-      case DLOG_TYPE_TODO:
-      {
-         todoEntry entry;
-         writeLog(entry);
-      }
    }
    
    if(_text == "")
@@ -204,47 +222,6 @@ int basicLogger<randomNumberT>::execute()
    
 }
 
-
-
-// template<class logT>
-// template<typename randomNumberT>
-// int basicLogger<randomNumberT>::log(logT & entry)
-// {
-//       
-//    entry.setUserName(_userName);
-//    entry.setText(_text);
-//    entry.setTimeStamp(_timeStamp);
-//    
-//    std::ofstream fout;
-//    
-//    std::string baseName = entry.getFileName();
-//    std::string pathName = _path + "/" + _userName + "/";
-//    std::string fullName = pathName + baseName;
-//    
-//    fout.open(fullName);
-//    
-//    fout << entry << "\n";
-//    
-//    fout.close();
-//    
-//    std::string baseCommand, command;
-//    
-//    baseCommand = "git --git-dir=";
-//    baseCommand += pathName + ".git  --work-tree=" + pathName + " ";
-//    command =  baseCommand + "add ";
-//    command += fullName;
-//    command += " >> /dev/null";
-//    //std::cout << command << "\n";
-//    int rv = system(command.c_str());
-//    
-//    command = baseCommand + "commit --allow-empty-message -m '' ";
-//    command += fullName;
-//    command += " >> /dev/null";
-//    //std::cout << command << "\n";
-//   
-//    rv = system(command.c_str());
-//    
-// }
 
 template<typename randomNumberT>
 template<class logT>
@@ -260,8 +237,21 @@ int basicLogger<randomNumberT>::writeLog(logT & entry)
    //fout << "<dlog v=\"" <<  DLOG_VERSION <<"\" tai=\"" << _timeStamp.getTimeStampString() << "\" t=\"";
    fout << "<dlog v=\"" <<  DLOG_VERSION <<"\" t=\"";
    fout << _typeStr << "\">\n";
+   
    entry.outputEntry(fout);
+   
+   
+   if(_isToDo)
+   {
+      fout << "<todo />\n";
+   }
+   
+   for(std::set<std::string>:: iterator tagit = _tags.begin(); tagit != _tags.end(); ++tagit)
+   {
+      fout << "<tag name=\"" << *tagit << "\" />\n";
+   }
    fout << "</dlog>";
+   
    
    fout.close();
    
