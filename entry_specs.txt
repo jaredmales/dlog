@@ -1,0 +1,28 @@
+Versions of dlog entries:
+
+V0:  
+File name: 2015_07_10_05_42_35.245311534_jaredmales@gmail.com_661305955.dlog
+           year_mo_dd_hr_mm_ss.sssssssss_user@name_randomnum.dlog
+
+<dlog v="0" tai="57213.2383130244390510" t="basic">
+   this is the first dlog of version 0
+</dlog>
+
+V0.1: 
+Changes:  
+-- droped tai from dlog entry attributes
+
+File name: same
+
+<dlog v="0.1" t="basic">
+created wisdom for fftwf, named it wisdomf. this is basically undocumented but the source file import-system-wisdom.c makes it clear. command executed was fftwf-wisdom -v -c -o wisdomf
+</dlog>
+
+
+V0.2:
+Changes:
+-- now type refers only to the format of the entry, that is basic==ASCII only, other choices will be html, latex(?), etc.
+-- todo is now an element <todo />
+-- added support for tags, e.g. <tags name="project" />
+
+
