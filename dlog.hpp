@@ -10,7 +10,11 @@
 #define DLOG_TYPE_BASIC 0
 #define DLOG_TYPE_BASICSTR "basic"
 
-#define DLOG_TYPE_HTML  1
+#define DLOG_TYPE_LATEX  1
+#define DLOG_TYPE_LATEXSTR "latex"
+
+
+#define DLOG_TYPE_HTML  2
 #define DLOG_TYPE_HTMLSTR "html"
 
 //#define MX_APP_DEFAULT_configPathGlobal

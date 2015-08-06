@@ -8,6 +8,8 @@
       <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
          <head>
             <title>dlog of <xsl:value-of select="dlogsheet/username" /> <br /></title>
+            <script type="text/javascript" src="http://math.etsu.edu/LaTeXMathML/LaTeXMathML.js"></script>
+            <link rel="stylesheet" type="text/css" href="http://math.etsu.edu/LaTeXMathML/LaTeXMathML.standardarticle.css" />
          </head>
          
          <body lang="en-US">
@@ -46,9 +48,18 @@
                                  <td />
                               </xsl:otherwise>
                            </xsl:choose>
-                           <td> <xsl:for-each select="line">
-                               <xsl:value-of select="." /><br /> 
-                               </xsl:for-each></td>
+                           <td> 
+                           <xsl:choose>
+                              <xsl:when test="@t='basic'">
+                                 <xsl:for-each select="line">
+                                    <xsl:value-of select="." /><br /> 
+                                 </xsl:for-each>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                  <xsl:copy-of select="./div" />
+                              </xsl:otherwise>
+                           </xsl:choose>
+                           </td>
                         </tr>
                      </tbody> 
                   </table>

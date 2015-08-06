@@ -136,9 +136,11 @@ void basicLogger<randomNumberT>::setupConfig()
    config.add(mx::configTarget("username","u", "user-name",mx::argType::Required, "", "user-name"));
    config.add(mx::configTarget("type","", "type",mx::argType::Required, "", "type"));
    config.add(mx::configTarget("type-basic","b", "basic",mx::argType::True, "", ""));
+   config.add(mx::configTarget("type-latex","l", "latex",mx::argType::True, "", ""));
+   config.add(mx::configTarget("type-html","h", "html",mx::argType::True, "", ""));
    
    config.add(mx::configTarget("todo","t", "todo",mx::argType::True, "", ""));
-   
+      
    config.add(mx::configTarget("tags", "", "tag", mx::argType::Required, "", "tag"));
   
 }
@@ -181,8 +183,18 @@ void basicLogger<randomNumberT>::loadConfig()
       _type = DLOG_TYPE_BASIC;
       _typeStr = DLOG_TYPE_BASICSTR;
    }
-   
+   if(config.get<std::string>("type") == "latex" || config.isSet("type-latex") )
+   {
+      _type = DLOG_TYPE_LATEX;
+      _typeStr = DLOG_TYPE_LATEXSTR;
+   }
   
+   if(config.get<std::string>("type") == "html" || config.isSet("type-html") )
+   {
+      _type = DLOG_TYPE_HTML;
+      _typeStr = DLOG_TYPE_HTMLSTR;
+   }
+   
    //Set for todo
    if(config.isSet("todo") )
    {
@@ -208,8 +220,20 @@ int basicLogger<randomNumberT>::execute()
       {  
          basicEntry entry;
          writeLog(entry);
+         break;
       }
-      
+      case DLOG_TYPE_LATEX:
+      {  
+         basicEntry entry;
+         writeLog(entry);
+         break;
+      }
+      case DLOG_TYPE_HTML:
+      {  
+         basicEntry entry;
+         writeLog(entry);
+         break;
+      }
    }
    
    if(_text == "")

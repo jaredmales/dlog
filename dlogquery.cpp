@@ -38,20 +38,36 @@ int main()
       std::cout << "<ss>" << std::setw(2) << std::setfill('0') <<ts.second << "</ss>\n";
       std::cout << "<ns>" << std::setw(9) << std::setfill('0') <<ts.nanosecond << "</ns>\n";
       std::cout << "<username>" << uname << "</username>\n";
-      while(!fin.eof()) 
+      
+      if(line.find("t=\"basic\"") != std::string::npos)
       {
-         getline(fin, line);
+         while(!fin.eof()) 
+         {
+            getline(fin, line);
       
          
-         if(line.find("</dlog>") != std::string::npos) break;
-         std::cout << "<line>\n<![CDATA[" << "\n";
-         std::cout << line;
-         std::cout << "]]></line>\n";
+            if(line.find("</dlog>") != std::string::npos) break;
+            std::cout << "<line>\n<![CDATA[" << "\n";
+            std::cout << line;
+            std::cout << "]]></line>\n";
+         }
+      }
+      else
+      {
+         std::cout << "<div>\n";
+         while(!fin.eof()) 
+         {
+            getline(fin, line);
+            if(line.find("</dlog>") != std::string::npos) break;
+            std::cout << line << "\n";;
+         }
+         std::cout << "</div>\n";
       }
       
-      
       std::cout << line << "\n";
+      
       fin.close();
+      
    }
 
 
