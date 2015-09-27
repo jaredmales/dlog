@@ -48,18 +48,22 @@
                                  <td />
                               </xsl:otherwise>
                            </xsl:choose>
-                           <td> 
+                            
                            <xsl:choose>
                               <xsl:when test="@t='basic'">
+                              <td>
                                  <xsl:for-each select="line">
                                     <xsl:value-of select="." /><br /> 
                                  </xsl:for-each>
+                               </td>   
                               </xsl:when>
                               <xsl:otherwise>
-                                  <xsl:copy-of select="./div" />
+                                  <xsl:for-each select="td">
+                                    <xsl:copy-of select="." />
+                                  </xsl:for-each>
                               </xsl:otherwise>
                            </xsl:choose>
-                           </td>
+                          
                         </tr>
                      </tbody> 
                   </table>
