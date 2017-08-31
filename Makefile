@@ -37,6 +37,7 @@ dlogquery: $(QUERY_OBJS) $(HEADS)
 
 install:
 	install dlog $(HOME)/bin
+	sudo install dlogquery /usr/lib/cgi-bin
 	
 .PHONY: clean
 clean:

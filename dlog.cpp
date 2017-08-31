@@ -1,15 +1,8 @@
-
-
-#include <cstdio>
-#include <iostream>
-#include <fstream>
-
-
-#include <cstdlib>
-#include <fcntl.h>
-#include <unistd.h>
-
-
+/** \file dlog.cpp
+  * \author Jared R. Males
+  * \brief The dlog main function.
+  *
+  */
 
 
 #include "dlog.hpp"
@@ -17,14 +10,8 @@
 
 #include "randomNumberLinux.hpp"
 
-
-
-
 int main(int argc, char *argv[])
 {
-   double djm, djmf;
-   std::string fts;
-   
    timespec tsp;
    
    dlog::getTimestamp(tsp);

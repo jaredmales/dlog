@@ -1,10 +1,18 @@
+/** \file basicLogger.hpp
+  * \author Jared R. Males
+  * \brief The basic logger application.
+  *
+  */
 
-#ifndef __dlog_basicLogger_hpp__
-#define __dlog_basicLogger_hpp__
+#ifndef dlog_basicLogger_hpp
+#define dlog_basicLogger_hpp
+
+#include <iostream>
+#include <fstream>
 
 //include of dlog.hpp must be before application.hpp
 #include "dlog.hpp"
-#include "mx/application.hpp"
+#include <mx/app/application.hpp>
 
 #include "timeStamp.hpp"
 
@@ -16,7 +24,11 @@
    
 namespace dlog
 {
-   
+ 
+///The basic logger application
+/**
+  * \tparam is a random number generation class, which is OS dependent.
+  */   
 template<typename randomNumberT>   
 class basicLogger : public mx::application
 {
@@ -32,6 +44,8 @@ protected:
    timeStamp _timeStamp;
    std::string _fileName;
    
+   bool _revise {false};
+   
    std::string _text;
    
    ///Set to true if entry is a to-do list entry
@@ -43,14 +57,15 @@ protected:
    std::set<std::string> _tags;
    
 public:
-   
-   basicLogger(const timespec & tsp);
 
-   void setUserName(const std::string & userName);
+   ///Constructor
+   basicLogger(const timespec & tsp /**< [in] */);
+
+   void setUserName(const std::string & userName /**< [in] */);
    std::string getUserName();
    
-   void setTimeStamp(const timespec & tsp);
-   void setTimeStamp(const timeStamp & tsp);
+   void setTimeStamp(const timespec & tsp /**< [in] */);
+   void setTimeStamp(const timeStamp & tsp /**< [in] */);
 
    std::string getFileName();
    std::string getPathName();
@@ -64,9 +79,6 @@ public:
 
    virtual int execute();
    
-  // template<class logT>
-  // int log(logT & entry);
-
    template<class logT>
    int writeLog(logT & entry);
    
@@ -130,19 +142,20 @@ std::string basicLogger<randomNumberT>::getFullName()
 template<typename randomNumberT>
 void basicLogger<randomNumberT>::setupConfig()
 {
-   config.add(mx::configTarget("editor","e", "editor",mx::argType::Required, "", "editor"));
-   config.add(mx::configTarget("path","p", "path",mx::argType::Required, "", "path"));
+   //config.add("editor","e", "editor",mx::argType::Required, "", "editor", false, "string", "Not implemented yet.  Currently always vim");
+   config.add("path","p", "path",mx::argType::Required, "", "path", true, "string", "The path of the dlog directory.");
 
-   config.add(mx::configTarget("username","u", "user-name",mx::argType::Required, "", "user-name"));
-   config.add(mx::configTarget("type","", "type",mx::argType::Required, "", "type"));
-   config.add(mx::configTarget("type-basic","b", "basic",mx::argType::True, "", ""));
-   config.add(mx::configTarget("type-latex","l", "latex",mx::argType::True, "", ""));
-   config.add(mx::configTarget("type-html","h", "html",mx::argType::True, "", ""));
+   config.add("username","u", "user-name",mx::argType::Required, "", "user-name", true, "string", "The user name");
+   config.add("type","", "type",mx::argType::Required, "", "type");
+   config.add("type-basic","b", "basic",mx::argType::True, "", "");
+   config.add("type-latex","l", "latex",mx::argType::True, "", "");
+   config.add("type-html","h", "html",mx::argType::True, "", "");
    
-   config.add(mx::configTarget("todo","t", "todo",mx::argType::True, "", ""));
+   config.add("todo","t", "todo",mx::argType::True, "", "");
       
-   config.add(mx::configTarget("tags", "", "tag", mx::argType::Required, "", "tag"));
+   config.add("tags", "", "tag", mx::argType::Required, "", "tag");
   
+   config.add("revise","r", "revise", mx::argType::Required, "", "revise", false, "string", "Revise a file, you must give the complete file name, but not the path.");
 }
    
 template<typename randomNumberT>
@@ -157,11 +170,20 @@ void basicLogger<randomNumberT>::loadConfig()
       exit(0);
    }
    _userName = tmpstr;//"jaredmales@gmail.com"
-   _fileName =  _timeStamp.getFileName(_userName, randomNumber.nextRandom());
- 
-   _path = config.get<std::string>("path");
    
-    
+   config(_fileName, "revise");
+   if(_fileName != "")
+   {
+      _revise = true;
+   }
+   else
+   {
+      _revise = false;
+      _fileName =  _timeStamp.getFileName(_userName, randomNumber.nextRandom());
+   }
+   
+   _path = config.get<std::string>("path");
+
    if(config.nonOptions.size() == 0)
    {
       tmpstr = "";
@@ -176,8 +198,6 @@ void basicLogger<randomNumberT>::loadConfig()
    }
    _text = tmpstr;
 
-  
-   
    if(config.get<std::string>("type") == "basic" || config.isSet("type-basic") )
    {
       _type = DLOG_TYPE_BASIC;
@@ -201,10 +221,12 @@ void basicLogger<randomNumberT>::loadConfig()
       _isToDo = true;
    }
    
-   //Load the tags
+   //Load the tags   
    for(int i=0; i< config.count("tags"); ++i)
    {
-      _tags.insert(config.get<std::string>("tags", i));
+      std::string nt;
+      config.get<std::string>(nt, "tags", i);
+      _tags.insert(nt);
    }
       
 }
@@ -214,29 +236,32 @@ int basicLogger<randomNumberT>::execute()
 {   
    std::string fullName;
    
-   switch(_type)
+   if(!_revise)
    {
-      case DLOG_TYPE_BASIC:
-      {  
-         basicEntry entry;
-         writeLog(entry);
-         break;
-      }
-      case DLOG_TYPE_LATEX:
-      {  
-         basicEntry entry;
-         writeLog(entry);
-         break;
-      }
-      case DLOG_TYPE_HTML:
-      {  
-         basicEntry entry;
-         writeLog(entry);
-         break;
+      switch(_type)
+      {
+         case DLOG_TYPE_BASIC:
+         {  
+            basicEntry entry;
+            writeLog(entry);
+            break;
+         }
+         case DLOG_TYPE_LATEX:
+         {    
+            basicEntry entry;
+            writeLog(entry);
+            break;
+         }
+         case DLOG_TYPE_HTML:
+         {  
+            basicEntry entry;
+            writeLog(entry);
+            break;
+         }
       }
    }
    
-   if(_text == "")
+   if(_text == "" || _revise)
    {
       std::string command = "vim -c 'startinsert' +2 " + getFullName();
       int r = system(command.c_str());
@@ -308,5 +333,5 @@ int basicLogger<randomNumberT>::commitLog()
 
 } //namespace dlog
 
-#endif //__dlog_basicLogger_hpp__
+#endif //dlog_basicLogger_hpp
 

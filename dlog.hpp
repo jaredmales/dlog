@@ -1,9 +1,14 @@
+/** \file dlog.hpp
+  * \author Jared R. Males
+  * \brief dlog application defines and utilities.
+  *
+  */
 
-#ifndef __dlog_hpp__
-#define __dlog_hpp__
+#ifndef dlog_hpp
+#define dlog_hpp
 
 
-
+#include <mx/timeUtils.hpp>
 
 #define DLOG_VERSION  ("0.2")
 
@@ -43,5 +48,5 @@ int getTimestamp(timespec & tsp)
 
 }
 
-#endif //__dlog_hpp__
+#endif //dlog_hpp
 

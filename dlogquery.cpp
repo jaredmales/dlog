@@ -82,8 +82,32 @@ void outputDocBegin()
    std::cout << "<body>\n";
 }
 
-void outputDocEnd()
+void outputDocEnd(int startEntry, int numEntries, int dlogSize)
 {
+   std::cout << "<hr />\n";
+   
+   
+   if( startEntry > 0 )
+   {
+      int previousStart = startEntry-numEntries;
+      if(previousStart < 0) previousStart = 0;
+      std::cout << "<a href=\"?start=" << previousStart+1 << "&amp;num=" << numEntries << "\">";
+      std::cout << previousStart+1 << "..." << startEntry-1+1 << "</a>\n";
+   }
+   
+   
+   int nextStart = startEntry + numEntries;
+   
+   std::cerr  << startEntry << " " << nextStart  << " " << numEntries << " " << dlogSize << "\n";
+   if(nextStart < dlogSize-1)
+   {
+      int lastEntry = nextStart + numEntries;
+      
+      if(lastEntry > dlogSize - 1) lastEntry = dlogSize;
+      std::cout << "<a href=\"?start=" << nextStart+1 << "&amp;num=" << numEntries << "\">";
+      std::cout << nextStart+1 << "..." << lastEntry<< "</a>\n";
+   }
+   
    std::cout << "</body>\n";
    std::cout << "</html>\n";
       
@@ -111,7 +135,7 @@ void outputEscapeLine(std::string line)
 
 int main()
 {
-   std::vector<std::string> dlogs = mx::getFileNames("/home/jaredmales/dlog/jaredmales@gmail.com/", "", ".dlog");
+   std::vector<std::string> dlogs = mx::getFileNames("/home/jrmales/dlog/jaredmales@gmail.com/", "", "", ".dlog");
 
    std::string uname;
  
@@ -119,7 +143,19 @@ int main()
    
    entryParse ep;
    
-   for(int i=dlogs.size()-1; i>=0;--i)
+   int startEntry = 0;
+   int numEntries = 0;
+   
+   if(numEntries <=0 || numEntries-1 >= dlogs.size()-1-startEntry) numEntries = dlogs.size()-1-startEntry;
+
+   std::cerr  << dlogs.size()-1<< "\n";
+   std::cerr << "numEntries: "<< numEntries << "\n";
+   std::cerr << (dlogs.size()-1-startEntry - numEntries) << "\n";
+   
+   int start = dlogs.size()-1- startEntry;
+   int stop = dlogs.size()-1-startEntry - (numEntries-1);
+   
+   for(int i=start; i >= stop;--i)
    {
       ep.parse(dlogs[i]);
 
@@ -186,14 +222,15 @@ int main()
          std::cout << "Tags: ";
          for(int j=0;j<ep.tags.size()-1;++j)
          {
-            std::cout << ep.tags[j] << ", ";
+            std::cout << "<a href=\"?" << ep.tags[j] << "\">" << ep.tags[j] << "</a>, ";
          }
-         std::cout << ep.tags[ep.tags.size()-1];
+         std::cout << "<a href=\"?" << ep.tags[ep.tags.size()-1] << "\">" << ep.tags[ep.tags.size()-1] << "</a>";
+         //std::cout << ep.tags[ep.tags.size()-1];
          std::cout << "<br />\n";
       }      
    }
 
-   outputDocEnd();
+   outputDocEnd(startEntry, numEntries, dlogs.size());
 
    return 0;
 }

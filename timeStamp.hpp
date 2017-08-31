@@ -1,13 +1,18 @@
+/** \file timeStamp.cpp
+  * \author Jared R. Males
+  * \brief A class for working with dlog timestamps.
+  *
+  */
 
-#ifndef __dlog_timeStamp_hpp__
-#define __dlog_timeStamp_hpp__
+#ifndef dlog_timeStamp_hpp
+#define dlog_timeStamp_hpp
 
 #include <time.h>
 #include <sys/time.h>
 
 #include <sstream>
 
-#include "mx/timeUtils.hpp"
+#include <mx/timeUtils.hpp>
 
 #define DLOG_TSLEN 30
 
@@ -114,8 +119,7 @@ std::string timeStamp::getFileName(const std::string & usern, const int randN)
     snprintf(fname, nc, "%04d_%02d_%02d_%02d_%02d_%02d.%09ld_%s_%09d.dlog", year,month,day,
                                  hour, minute, second, nanosecond,usern.c_str(),randN);
     
-    //fname <<  year << "_" << month << "_" << day << "_" << hour << "_" << minute << "_" << second << ".";
-    //fname << nanosecond <<  "_" << usern << "_" << randN << ".dslog";
+    
     rvstr = fname;
     free(fname);
     
@@ -169,7 +173,7 @@ int timeStamp::parseFileName(std::string & uname, long & randn, const std::strin
 
 } //namespace dlog 
 
-#endif //__dlog_timeStamp_hpp__
+#endif //dlog_timeStamp_hpp
 
 
 

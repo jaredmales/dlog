@@ -1,6 +1,14 @@
+/** \file randomNumberLinux.cpp
+  * \author Jared R. Males
+  * \brief Random number generator for Linux.
+  *
+  */
 
-#ifndef __dlog_randomNumberLinux_hpp__
-#define __dlog_randomNumberLinux_hpp__
+#ifndef dlog_randomNumberLinux_hpp
+#define dlog_randomNumberLinux_hpp
+
+#include <fcntl.h>
+#include <unistd.h>
 
 namespace dlog
 {
@@ -57,5 +65,5 @@ public:
 
 } //namespace dlog
 
-#endif //__dlog_randomNumberLinux_hpp__
+#endif //dlog_randomNumberLinux_hpp
 
