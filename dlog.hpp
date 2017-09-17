@@ -24,7 +24,7 @@
 
 //#define MX_APP_DEFAULT_configPathGlobal
 //#define MX_APP_DEFAULT_configPathGlobal_env
-#define MX_APP_DEFAULT_configPathUser  "dlog/dlog.conf"
+#define MX_APP_DEFAULT_configPathUser  ".dlog/dlog.conf"
 //#define MX_APP_DEFAULT_configPathUser_env
 //#define MX_APP_DEFAULT_configPathLocal
 //#define MX_APP_DEFAULT_configPathLocal_env

@@ -283,13 +283,11 @@ int basicLogger<randomNumberT>::writeLog(logT & entry)
       
    fout.open(getFullName());
    
-   //fout << "<dlog v=\"" <<  DLOG_VERSION <<"\" tai=\"" << _timeStamp.getTimeStampString() << "\" t=\"";
    fout << "<dlog v=\"" <<  DLOG_VERSION <<"\" t=\"";
    fout << _typeStr << "\">\n";
    
    entry.outputEntry(fout);
-   
-   
+      
    if(_isToDo)
    {
       fout << "<todo />\n";
@@ -319,15 +317,33 @@ int basicLogger<randomNumberT>::commitLog()
    command =  baseCommand + "add ";
    command += fullName;
    command += " >> /dev/null";
-   //std::cout << command << "\n";
+   
    int rv = system(command.c_str());
+   
+   if(rv != 0)
+   {
+      std::cerr << "dlog: git error. (" << __FILE__ << " " << __LINE__ << ")\n";
+      std::cerr << "command was: " << command << "\n";
+   }
    
    command = baseCommand + "commit --allow-empty-message -m '' ";
    command += fullName;
    command += " >> /dev/null";
-   //std::cout << command << "\n";
   
    rv = system(command.c_str());
+   
+   if(rv == 0)
+   {
+      std::cout << "Committed: " << _fileName << "\n";
+   }
+   else
+   {
+      std::cerr << "dlog: git error. (" << __FILE__ << " " << __LINE__ << ")\n";
+      std::cerr << "command was: " << command << "\n";
+      std::cerr << "returned: " << rv << "\n";
+   }
+      
+   return rv;
    
 }
 
