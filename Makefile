@@ -22,7 +22,7 @@ TARGETS = dlog dlogquery
 
 all : $(TARGETS)
 
-OBJS = dlog_main.o
+OBJS = dlog.o
 QUERY_OBJS = dlogquery.o
 
 HEADS =   dlog.hpp  timeStamp.hpp  basicEntry.hpp basicLogger.hpp
@@ -30,10 +30,10 @@ HEADS =   dlog.hpp  timeStamp.hpp  basicEntry.hpp basicLogger.hpp
 dlog_main.o: $(HEADS)
 
 dlog: $(OBJS) $(HEADS)
-	$(CPP) -o dlog $(OBJS) $(OPTIMIZE) $(CPPFLAGS) -L$(LIB_PATH) -lmxlib  $(MXLIB_EXLIBS) 
+	$(CPP) -o dlog $(OBJS) $(OPTIMIZE) $(CPPFLAGS) -L$(LIB_PATH) $(MXLIB_EXLIBS)  -L/home/jrmales/lib -lsofa_c
 
 dlogquery: $(QUERY_OBJS) $(HEADS)
-	$(CPP) -o dlogquery $(QUERY_OBJS) $(OPTIMIZE) $(CPPFLAGS) -L$(LIB_PATH) -lmxlib  $(MXLIB_EXLIBS) 
+	$(CPP) -o dlogquery $(QUERY_OBJS) $(OPTIMIZE) $(CPPFLAGS) -L$(LIB_PATH)  $(MXLIB_EXLIBS) -L/home/jrmales/lib -lsofa_c
 
 install:
 	install dlog $(HOME)/bin

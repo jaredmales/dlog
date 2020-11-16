@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iomanip>
 
-#include <mx/fileUtils.hpp>
+#include <mx/ioutils/fileUtils.hpp>
 
 #include "dlog.hpp"
 #include "timeStamp.hpp"
@@ -135,7 +135,7 @@ void outputEscapeLine(std::string line)
 
 int main()
 {
-   std::vector<std::string> dlogs = mx::getFileNames("/home/jrmales/.dlog/jaredmales@gmail.com/", "", "", ".dlog");
+   std::vector<std::string> dlogs = mx::ioutils::getFileNames("/home/jrmales/.dlog/jaredmales@gmail.com/", "", "", ".dlog");
 
    std::string uname;
  
