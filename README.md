@@ -13,7 +13,7 @@ editor=vi
 
 Enable a firewall on your machine.  On ubuntu do
 ```
-$ sudo enable ufw
+$ sudo ufw enable
 $ sudo ufw status
 ```
 

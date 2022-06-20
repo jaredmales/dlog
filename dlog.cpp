@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
       
    dlog::basicLogger<dlog::randomNumberLinux> log(tsp);
       
+   
+   
    log.main(argc, argv);
 }
    

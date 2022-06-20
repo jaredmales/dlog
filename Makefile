@@ -1,6 +1,6 @@
 INCLUDE_PATH = $(HOME)/include
 LIB_PATH = $(HOME)/lib
-MXLIB_EXLIBS = -lboost_filesystem -lboost_system -lcfitsio 
+MXLIB_EXLIBS = -lmxlib
 
 OPTIMIZE = -O3
 
@@ -30,10 +30,10 @@ HEADS =   dlog.hpp  timeStamp.hpp  basicEntry.hpp basicLogger.hpp
 dlog_main.o: $(HEADS)
 
 dlog: $(OBJS) $(HEADS)
-	$(CPP) -o dlog $(OBJS) $(OPTIMIZE) $(CPPFLAGS) -L$(LIB_PATH) $(MXLIB_EXLIBS)  -L/home/jrmales/lib -lsofa_c
+	$(CPP) -o dlog $(OBJS) $(OPTIMIZE) $(CPPFLAGS) -L$(LIB_PATH) $(MXLIB_EXLIBS) 
 
 dlogquery: $(QUERY_OBJS) $(HEADS)
-	$(CPP) -o dlogquery $(QUERY_OBJS) $(OPTIMIZE) $(CPPFLAGS) -L$(LIB_PATH)  $(MXLIB_EXLIBS) -L/home/jrmales/lib -lsofa_c
+	$(CPP) -o dlogquery $(QUERY_OBJS) $(OPTIMIZE) $(CPPFLAGS) -L$(LIB_PATH)  $(MXLIB_EXLIBS) -lboost_filesystem
 
 install:
 	install dlog $(HOME)/bin

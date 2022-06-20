@@ -12,7 +12,7 @@
 
 #include <sstream>
 
-#include <mx/timeUtils.hpp>
+#include <mx/sys/timeUtils.hpp>
 
 #define DLOG_TSLEN 30
 
@@ -75,7 +75,7 @@ void timeStamp::setTime(const timespec & tsp)
 {
    tm tm0;
 
-   mx::timespecUTC2TAIMJD(mjdn, mjdf, tsp, &tm0);
+   mx::sys::timespecUTC2TAIMJD(mjdn, mjdf, tsp, &tm0);
 
    year = tm0.tm_year + 1900;
    month = tm0.tm_mon + 1;

@@ -94,6 +94,8 @@ basicLogger<randomNumberT>::basicLogger(const timespec & tsp)
    _typeStr = DLOG_TYPE_BASICSTR;
 
    _isToDo = false;
+   
+   m_configPathUser = ".dlog/dlog.conf";
 }
 
 
@@ -272,6 +274,7 @@ int basicLogger<randomNumberT>::execute()
 
    commitLog();
 
+   return 0;
 }
 
 
@@ -305,6 +308,7 @@ int basicLogger<randomNumberT>::writeLog(logT & entry)
 
    fout.close();
 
+   return 0;
 }
 
 template<typename randomNumberT>

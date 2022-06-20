@@ -7,6 +7,7 @@
 #include "dlog.hpp"
 #include "timeStamp.hpp"
 
+#include <boost/filesystem.hpp>
 
 struct entryParse
 {
